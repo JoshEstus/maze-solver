@@ -1,4 +1,5 @@
 import time
+import random
 
 from drawing import Cell
 
@@ -12,7 +13,8 @@ class Maze():
             num_cols,
             cell_size_x,
             cell_size_y,
-            window = None
+            window = None,
+            seed = None
     ):
         self.x1 = x1
         self.y1 = y1
@@ -22,9 +24,18 @@ class Maze():
         self.cell_size_y = cell_size_y
         self.window = window
         self.cells = []
+        if seed:
+            self.seed = random.seed(seed)
         self._create_cells()
         self._break_entrance_and_exit()
+        self._break_walls_r(0, 0)
+        self._reset_cells_visited()
 
+
+    def _reset_cells_visited(self):
+        for col in self.cells:
+            for row_cell in col:
+                row_cell.visited = False
 
     def _create_cells(self):
         for i in range(self.num_cols):
@@ -60,3 +71,39 @@ class Maze():
         bottom_right = self.cells[-1][-1]
         bottom_right.has_bottom_wall = False
         self._draw_cell(self.num_cols -1, self.num_rows - 1)
+
+    def _break_walls_r(self, i, j):
+        self.cells[i][j].visited = True
+        while True:
+            need_visit = []
+            if i < self.num_cols -1  and not self.cells[i+1][j].visited:
+                need_visit.append((i+1, j))
+
+            if j < self.num_rows -1 and not self.cells[i][j+1].visited:
+                need_visit.append((i, j+1))
+
+            if i > 0 and not self.cells[i-1][j].visited:
+                need_visit.append((i-1, j))
+
+            if j > 0 and not self.cells[i][j-1].visited:
+                need_visit.append((i, j-1))
+
+            if len(need_visit) == 0:
+                self._draw_cell(i, j)
+                return
+            else:
+                ran_ind = random.randrange(0, len(need_visit))
+                visiting = need_visit[ran_ind]
+                if visiting[0] < i:
+                    self.cells[visiting[0]][visiting[1]].has_bottom_wall = False
+                    self.cells[i][j].has_top_wall = False
+                if visiting[0] > i:
+                    self.cells[visiting[0]][visiting[1]].has_top_wall = False
+                    self.cells[i][j].has_bottom_wall = False
+                if visiting[1] > j:
+                    self.cells[visiting[0]][visiting[1]].has_left_wall = False
+                    self.cells[i][j].has_right_wall = False
+                if visiting[1] < j:
+                    self.cells[visiting[0]][visiting[1]].has_right_wall = False
+                    self.cells[i][j].has_left_wall = False
+                self._break_walls_r(visiting[0], visiting[1])

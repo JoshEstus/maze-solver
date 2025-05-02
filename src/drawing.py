@@ -26,6 +26,7 @@ class Cell():
         self._y1 = None
         self._y2 = None
         self.window = win
+        self.visited = False
 
     def draw(self, x1, x2, y1, y2):
         if self.window is None:
