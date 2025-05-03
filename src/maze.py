@@ -62,7 +62,7 @@ class Maze():
         if self.window is None:
             return
         self.window.redraw()
-        time.sleep(.05)
+        time.sleep(.005)
 
     def _break_entrance_and_exit(self):
         top_left = self.cells[0][0]
