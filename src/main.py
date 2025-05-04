@@ -1,15 +1,20 @@
 from window import Window
 from maze import Maze
+import sys
 
 
 def main():
-    num_rows = 30
-    num_cols = 30
+
+    # print(sys.getrecursionlimit())
+    sys.setrecursionlimit(2000)
+
+    num_rows = 40
+    num_cols = 40
     margin = 10
     screen_x = 1200
     screen_y = 800
-    cell_size_x = (screen_x - 3 * margin) / num_cols
-    cell_size_y = (screen_y - 3 * margin) / num_rows
+    cell_size_x = (screen_x - 2 * margin) / num_cols
+    cell_size_y = (screen_y - 2 * margin) / num_rows
     win = Window(screen_x, screen_y)
 
     maze = Maze(margin, margin, num_rows, num_cols, cell_size_x, cell_size_y, win)
